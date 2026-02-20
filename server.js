@@ -3,6 +3,8 @@ import dotenv from"dotenv";
 import colors from "colors";
 import cors from "cors";
 import connectDB from "./config/db.js"
+import authRoutes from "./routes/authRoutes.js";
+import equipmentRoutes from './routes/equipmentRoutes.js'
 
 // loding envoriment variables
 dotenv.config();
@@ -15,7 +17,8 @@ const app = express();
 // middleware 
 app.use(cors());
 app.use(express.json());
-
+app.use('/api/auth',authRoutes)
+app.use('/api/equipment', equipmentRoutes)
 // base route
 app.get('/',(req, res)=>{
     res.send('KhetiGadi is running...')
