@@ -10,6 +10,12 @@ export const addEquipment = async (req, res) => {
     try{
         req.body.owner = req.user._id;
 
+        // check if files were uploaded
+
+        if (req.files){
+            req.body.images = req.files.map( file => file.path)
+        }
+
         const equipment = await Equipment.create(req.body);
 
         res.status(201).json({
