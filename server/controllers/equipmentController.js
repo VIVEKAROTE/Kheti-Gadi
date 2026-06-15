@@ -40,3 +40,19 @@ export const getEquipment = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 };
+
+// @desc Get equipment by ID
+// @route GET /api/equipment/:id
+// @access Public
+
+export const getEquipmentById = async (req, res) => {
+    try {
+        const equipment = await Equipment.findById(req.params.id).populate('owner', 'name phoneNumber email');
+        if (!equipment) {
+            return res.status(404).json({ success: false, message: "Equipment not found" });
+        }
+        res.status(200).json({ success: true, data: equipment });
+    } catch(error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

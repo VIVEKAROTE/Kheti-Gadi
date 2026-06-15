@@ -43,30 +43,34 @@ export const registerUser = async(req, res) => {
             token: generateToken(user._id),
         });
     }catch(error){
-            res.status(200).json({message: error.message})
+            res.status(400).json({message: error.message})
     };
     
 };
 
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  // find the user by the email
-  const user = await User.findOne({ email });
+    // find the user by the email
+    const user = await User.findOne({ email });
 
-  // Check if user exists and password matches
+    // Check if user exists and password matches
 
-  if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id),
-    });
-    console.log(`${user.name} logged in Sucessfully`.green.underline)
-  } else {
-    res.status(401).json({ message: "Invalid email or password" });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+      console.log(`${user.name} logged in Sucessfully`.green.underline)
+    } else {
+      res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

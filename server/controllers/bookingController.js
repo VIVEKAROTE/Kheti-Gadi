@@ -75,4 +75,33 @@ export const getMyBookings = async (req,res) => {
     }catch(error){
         res.status(500).json({ sucess: false, message: error.message })
     }
-}
+};
+
+export const updateBookingStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const validStatuses = ['confirmed', 'cancelled', 'completed'];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid status value" });
+        }
+
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ success: false, message: "Booking not found" });
+        }
+
+        // Verify if the logged-in user is the owner of the booked equipment
+        if (booking.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: "Not authorized to update this booking" });
+        }
+
+        booking.status = status;
+        await booking.save();
+
+        res.status(200).json({ success: true, data: booking });
+    } catch(error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
